@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deploy Inkprint</title>
+<meta name="robots" content="noindex">
+<style>
+  body { margin: 0; font: 15px/1.55 Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; color: #111; background: #F7F7F5; }
+  main { max-width: 640px; margin: 0 auto; padding: 48px 20px; }
+  h1 { font-size: 30px; font-weight: 500; letter-spacing: -.02em; margin: 0 0 8px; }
+  p { color: #555; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0; }
+  button { font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .1em; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid #ECECEA; background: #fff; color: #111; cursor: pointer; }
+  button.solid { background: #0E0E0E; color: #fff; border-color: #0E0E0E; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  #log { background: #fff; border-radius: 18px; border: 1px solid #ECECEA; padding: 16px; min-height: 64px; white-space: pre-wrap; word-break: break-word; }
+  #log a { color: inherit; }
+  code { background: #f6f6f6; padding: 2px 5px; font-size: 13px; }
+  li { margin-bottom: 6px; color: #555; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Deploy Inkprint</h1>
+  <p>Deploys <code>contracts/Inkprint.sol</code> (Solidity 0.8.20, optimizer 200 runs, EVM <code>paris</code>) from your MetaMask account. Deploy to testnet first, try the app, then deploy to mainnet.</p>
+  <div class="row">
+    <button type="button" data-net="testnet">Deploy to Testnet (968)</button>
+    <button type="button" class="solid" data-net="mainnet">Deploy to Mainnet (677)</button>
+  </div>
+  <div id="log">Ready. You will confirm one transaction in MetaMask.</div>
+  <ol>
+    <li>After deploying, open the app on this same localhost address (add <code>?net=testnet</code> for testnet). It picks up the new address automatically.</li>
+    <li>For the live site, paste the address into the matching <code>contract: ''</code> field in <code>CONFIG.networks</code> near the top of <code>app.js</code>, and into the README.</li>
+  </ol>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.5/ethers.umd.min.js" crossorigin="anonymous"></script>
+<script>
+(() => {
+  const NETWORKS = {
+    mainnet: { chainId: 677, name: 'BOT Chain', rpc: 'https://rpc.botchain.ai', explorer: 'https://scan.botchain.ai' },
+    testnet: { chainId: 968, name: 'BOT Chain Testnet', rpc: 'https://rpc.bohr.life', explorer: 'https://scan.bohr.life' },
+  };
+  const log = document.getElementById('log');
+  const buttons = [...document.querySelectorAll('button[data-net]')];
+  const say = (...nodes) => log.replaceChildren(...nodes);
+  const link = (href, text) => Object.assign(document.createElement('a'), { href, textContent: text, target: '_blank', rel: 'noopener' });
+
+  async function switchTo(net) {
+    const chainId = '0x' + net.chainId.toString(16);
+    try {
+      await ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] });
+    } catch (e) {
+      const unknownChain = e.code === 4902 || e?.data?.originalError?.code === 4902 || /unrecognized chain/i.test(e.message || '');
+      if (!unknownChain) throw e;
+      await ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [{ chainId, chainName: net.name, nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 }, rpcUrls: [net.rpc], blockExplorerUrls: [net.explorer] }],
+      });
+    }
+  }
+
+  async function deploy(key) {
+    const net = NETWORKS[key];
+    if (!window.ethereum) return say('MetaMask was not found. Install it from ', link('https://metamask.io/download/', 'metamask.io'), ' and reload.');
+    buttons.forEach((b) => (b.disabled = true));
+    try {
+      say('Loading compiled contract…');
+      const artifact = await (await fetch('build/Inkprint.json')).json();
+      say('Connecting to MetaMask…');
+      await ethereum.request({ method: 'eth_requestAccounts' });
+      await switchTo(net);
+      const signer = await new ethers.BrowserProvider(ethereum).getSigner();
+      if (Number((await signer.provider.getNetwork()).chainId) !== net.chainId) throw new Error(`MetaMask is not on ${net.name}.`);
+      say(`Confirm the deployment to ${net.name} in MetaMask…`);
+      const contract = await new ethers.ContractFactory(artifact.abi, artifact.bytecode, signer).deploy();
+      const tx = contract.deploymentTransaction();
+      say('Waiting for confirmation… ', link(`${net.explorer}/tx/${tx.hash}`, 'view transaction'));
+      await contract.waitForDeployment();
+      const address = await contract.getAddress();
+      try { localStorage.setItem('inkprint.contract.' + net.chainId, address); } catch { /* ignore */ }
+      say(`Deployed to ${net.name}:\n`, link(`${net.explorer}/address/${address}`, address), '\n\nNext: ', link('./' + (key === 'testnet' ? '?net=testnet' : ''), 'open the app'), ' and stamp your first certificate.');
+    } catch (e) {
+      console.error(e);
+      const cancelled = e.code === 4001 || e.code === 'ACTION_REJECTED';
+      say(cancelled ? 'Cancelled in MetaMask. Nothing was deployed.' : `Deployment failed: ${e.shortMessage || e.message}`);
+    } finally {
+      buttons.forEach((b) => (b.disabled = false));
+    }
+  }
+
+  buttons.forEach((b) => b.addEventListener('click', () => deploy(b.dataset.net)));
+})();
+</script>
+</body>
+</html>

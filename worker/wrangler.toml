@@ -1,0 +1,22 @@
+name = "inkprint"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Comma-separated list of site origins allowed to call the Worker (no trailing slash).
+# Replace with your live domain(s); keep localhost only while developing.
+ALLOWED_ORIGINS = "http://localhost:4609"
+# Which detector answers POST /detect: "sapling" (default) or "gptzero".
+DETECTOR = "sapling"
+# Scans per IP per hour (also applies separately to POST /extract-url). Protects the API credit.
+RATE_LIMIT = "10"
+
+# The detector key is a secret, never a var:
+#   npx wrangler secret put DETECTOR_API_KEY
+
+# Optional: a KV namespace makes the rate limit hold across Worker instances
+# (without it the count is kept in memory per instance).
+#   npx wrangler kv namespace create RATE_KV
+# [[kv_namespaces]]
+# binding = "RATE_KV"
+# id = "<namespace id>"
