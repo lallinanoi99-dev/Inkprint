@@ -10,7 +10,7 @@ An honest AI writing detector. Drop in text, a file or a link and get a clear an
 |---|---|
 | Live site | _not published yet_ |
 | Worker (`/detect`, `/extract-url`) | _not deployed yet_ |
-| Contract (BOT Chain mainnet, chain ID 677) | _not deployed yet_ |
+| Contract (BOT Chain mainnet, chain ID 677) | [`0x2A1f419Bd59A7e86db55FCB370D1E8d6fDBDBE7a`](https://scan.botchain.ai/address/0x2A1f419Bd59A7e86db55FCB370D1E8d6fDBDBE7a) |
 | Contract (testnet, chain ID 968) | _not deployed yet_ |
 
 ## Project layout

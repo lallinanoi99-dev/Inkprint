@@ -8,7 +8,7 @@ import { sampleDetection } from './samples.js';
 const CONFIG = {
   networks: {
     // `contract` on mainnet is the single source for the app, the footer address and the explorer link.
-    mainnet: { chainId: 677, name: 'BOT Chain', rpc: 'https://rpc.botchain.ai', explorer: 'https://scan.botchain.ai', contract: '' },
+    mainnet: { chainId: 677, name: 'BOT Chain', rpc: 'https://rpc.botchain.ai', explorer: 'https://scan.botchain.ai', contract: '0x2A1f419Bd59A7e86db55FCB370D1E8d6fDBDBE7a' },
     testnet: { chainId: 968, name: 'BOT Chain Testnet', rpc: 'https://rpc.bohr.life', explorer: 'https://scan.bohr.life', contract: '' },
   },
   // The Worker (worker/), e.g. 'https://inkprint.<account>.workers.dev'. Empty → signals only, no URL import.
