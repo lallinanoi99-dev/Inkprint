@@ -5,7 +5,7 @@ compatibility_date = "2026-09-01"
 [vars]
 # Comma-separated list of site origins allowed to call the Worker (no trailing slash).
 # Replace with your live domain(s); keep localhost only while developing.
-ALLOWED_ORIGINS = "http://localhost:4609"
+ALLOWED_ORIGINS = "https://lallinanoi99-dev.github.io, http://localhost:4609"
 # Which detector answers POST /detect: "sapling" (default) or "gptzero".
 DETECTOR = "sapling"
 # Scans per IP per hour (also applies separately to POST /extract-url). Protects the API credit.

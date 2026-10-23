@@ -12,7 +12,7 @@ const CONFIG = {
     testnet: { chainId: 968, name: 'BOT Chain Testnet', rpc: 'https://rpc.bohr.life', explorer: 'https://scan.bohr.life', contract: '' },
   },
   // The Worker (worker/), e.g. 'https://inkprint.<account>.workers.dev'. Empty → signals only, no URL import.
-  workerUrl: '', // set below for localhost
+  workerUrl: 'https://inkprint.inkprint-worker.workers.dev',
   detectTimeoutMs: 15000,
   extractTimeoutMs: 9000,
   github: 'https://github.com/lallinanoi99-dev/Inkprint',
