@@ -1,7 +1,7 @@
 // Exercises the Worker's fetch handler in Node with the detector API and web pages stubbed out.
 // Usage: npm test (from worker/)
 import assert from 'node:assert/strict';
-import worker, { blockedHost, extractArticle, tidyResult } from '../src/index.js';
+import worker, { blockedHost, extractArticle, tidyResult } from '../src/core.js';
 
 const ORIGIN = 'https://inkprint.test';
 const env = { ALLOWED_ORIGINS: `${ORIGIN}, http://localhost:4609`, DETECTOR_API_KEY: 'test-key' };

@@ -12,7 +12,7 @@ const CONFIG = {
     testnet: { chainId: 968, name: 'BOT Chain Testnet', rpc: 'https://rpc.bohr.life', explorer: 'https://scan.bohr.life', contract: '' },
   },
   // The Worker (worker/), e.g. 'https://inkprint.<account>.workers.dev'. Empty → signals only, no URL import.
-  workerUrl: '',
+  workerUrl: '', // set below for localhost
   detectTimeoutMs: 15000,
   extractTimeoutMs: 9000,
   github: 'https://github.com/',
@@ -76,7 +76,8 @@ if (!MAINNET.contract && isLocal) MAINNET.contract = storage('inkprint.contract.
 const PREVIEW = !NET.contract; // no contract yet: stamps are simulated in this browser
 const CHAIN_HEX = '0x' + NET.chainId.toString(16);
 const PREVIEW_WALLET = '0x1A4C000000000000000000000000000000000909';
-const WORKER = CONFIG.workerUrl.replace(/\/+$/, '');
+// On localhost, use the Worker started with `npx wrangler dev --port 8787`.
+const WORKER = (CONFIG.workerUrl || (isLocal ? 'http://localhost:8787' : '')).replace(/\/+$/, '');
 
 const state = {
   account: null, chainId: null, previewWallet: false,

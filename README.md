@@ -75,9 +75,9 @@ Before deploying, edit `worker/wrangler.toml`:
 - `DETECTOR`: `sapling` (default, [Sapling AI Detector](https://sapling.ai/docs/api/detector)) or `gptzero` ([GPTZero API](https://gptzero.me/docs)). Check the plan's free-tier limits and terms before going live — both return an overall score and per-sentence scores.
 - `RATE_LIMIT`: scans per IP per hour (default 10) to protect API credit. Bind a KV namespace as `RATE_KV` to make it hold across instances.
 
-Then paste the Worker URL (no path) into `CONFIG.workerUrl` in `app.js`.
+Then paste the Worker URL (no path) into `CONFIG.workerUrl` in `app.js`. On localhost the site uses `http://localhost:8787` automatically, so for local testing put the key in `worker/.dev.vars` (`DETECTOR_API_KEY=...`, git-ignored) and run `npx wrangler dev --port 8787`.
 
-**Shared Worker from Week 1:** both routes are self-contained. To merge them into the shared Worker, copy `DETECTORS`, `tidyResult`, `detect`, `blockedHost`, `extractArticle`, `extractUrl` and their helpers, and add the two paths to its router. The rate limiter and CORS helpers are the same pattern as before; the rate-limit keys are namespaced by route.
+**Shared Worker from Week 1:** both routes are self-contained. To merge them into the shared Worker, copy `DETECTORS`, `tidyResult`, `detect`, `blockedHost`, `extractArticle`, `extractUrl` and their helpers from `worker/src/core.js`, and add the two paths to its router. The rate limiter and CORS helpers are the same pattern as before; the rate-limit keys are namespaced by route.
 
 ### What the Worker does
 
