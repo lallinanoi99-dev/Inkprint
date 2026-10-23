@@ -15,7 +15,7 @@ const CONFIG = {
   workerUrl: '', // set below for localhost
   detectTimeoutMs: 15000,
   extractTimeoutMs: 9000,
-  github: 'https://github.com/',
+  github: 'https://github.com/lallinanoi99-dev/Inkprint',
 };
 
 const CERT_TUPLE = 'tuple(address owner, bytes32 textHash, uint8 score, uint8 confidence, string detector, uint64 at)';
